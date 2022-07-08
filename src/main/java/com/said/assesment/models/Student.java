@@ -18,10 +18,7 @@ public class Student {
     private String name;
 
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "course_name"),
-            @JoinColumn(name = "institution_name")
-    })
+    @JoinColumn(name = "course_id")
     private Course course;
 
     public Student(String name, Course course) {

@@ -1,13 +1,24 @@
 package com.said.assesment.models;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 public class Institution {
+    
+    private String name;
 
     @Id
-    private String name;
+    @SequenceGenerator(name = "institution_sequence", sequenceName = "institution_sequence", allocationSize = 1)
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "institution_sequence"
+    )
+    private long id;
 
     public Institution(String name) {
         this.name = name;
@@ -25,4 +36,11 @@ public class Institution {
         this.name = name;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

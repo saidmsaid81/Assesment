@@ -1,5 +1,6 @@
 package com.said.assesment.controllers;
 
+import com.said.assesment.models.Institution;
 import com.said.assesment.models.ResponseObject;
 import com.said.assesment.services.CourseService;
 import com.said.assesment.services.InstitutionService;
@@ -104,7 +105,7 @@ public class Controller {
                     "Error retrieving courses in institution. Please provide institution name",
                     new ArrayList<>());
 
-        if (mInstitutionService.checkInstitutionExists(institutionName))
+        if (mInstitutionService.getInstitution(institutionName) != null)
             return mCourseService.listAllCoursesByInstitution(institutionName);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
@@ -123,7 +124,7 @@ public class Controller {
                     "Error searching courses. Please provide institution name",
                     new ArrayList<>());
 
-        if (mInstitutionService.checkInstitutionExists(institutionName))
+        if (mInstitutionService.getInstitution(institutionName) != null)
             return mCourseService.searchCoursesByInstitution(keyword, institutionName);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
@@ -139,7 +140,7 @@ public class Controller {
                     "Error sorting courses. Please provide institution name",
                     new ArrayList<>());
 
-        if (!mInstitutionService.checkInstitutionExists(institutionName))
+        if (mInstitutionService.getInstitution(institutionName) == null)
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Error sorting courses in institution. Institution does not exist",
                     new ArrayList<>());
@@ -178,8 +179,9 @@ public class Controller {
                     "Error adding course. Please provide course name and institution name",
                     new ArrayList<>());
 
-        if (mInstitutionService.checkInstitutionExists(institutionName))
-            return mCourseService.addCourseToInstitution(courseName, institutionName);
+        Institution institution = mInstitutionService.getInstitution(institutionName);
+        if (institution != null)
+            return mCourseService.addCourseToInstitution(courseName, institution.getId());
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Error adding course to institution. Institution does not exist in the system",
@@ -195,8 +197,9 @@ public class Controller {
                             "current institution name",
                     new ArrayList<>());
 
-        if (mInstitutionService.checkInstitutionExists(institutionName))
-            return mCourseService.editCourseName(institutionName, newCourseName, oldCourseName);
+        Institution institution = mInstitutionService.getInstitution(institutionName);
+        if (institution != null)
+            return mCourseService.editCourseName(institution.getId(), newCourseName, oldCourseName);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Error updating course name in institution. Institution does not exist",
@@ -212,7 +215,7 @@ public class Controller {
                     "Error adding student. Please provide student name, course name and institution name",
                     new ArrayList<>());
 
-        if (mCourseService.checkIfCourseExists(courseName, institutionName))
+        if (mCourseService.getCourseIfExists(courseName, institutionName) != null)
             return mStudentService.addAStudent(studentName, courseName, institutionName);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
@@ -271,7 +274,7 @@ public class Controller {
                     new ArrayList<>());
 
         page = resolvePage(page);
-        if (mInstitutionService.checkInstitutionExists(institutionName))
+        if (mInstitutionService.getInstitution(institutionName) != null)
             return mStudentService.getStudentsByInstitution(institutionName, page);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
@@ -293,7 +296,7 @@ public class Controller {
                     new ArrayList<>());
 
         page = resolvePage(page);
-        if (mInstitutionService.checkInstitutionExists(institutionName))
+        if (mInstitutionService.getInstitution(institutionName) != null)
             return mStudentService.searchStudentByInstitution(keyword, institutionName, page);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
@@ -313,7 +316,7 @@ public class Controller {
                     new ArrayList<>());
 
         page = resolvePage(page);
-        if (mCourseService.checkIfCourseExists(courseName, institutionName))
+        if (mCourseService.getCourseIfExists(courseName, institutionName) != null)
             return mStudentService.filterStudentsByInstitutionAndCourse(institutionName, courseName, page);
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),

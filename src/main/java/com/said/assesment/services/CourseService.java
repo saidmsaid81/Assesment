@@ -42,15 +42,17 @@ public class CourseService {
         );
     }
 
-    public ResponseObject addCourseToInstitution(String courseName, String institutionName) {
-        if (mCourseRepository.courseExistsInInstitution(courseName, institutionName))
+    public ResponseObject addCourseToInstitution(String courseName, long institutionId) {
+        if (mCourseRepository.checkIfCourseExists(courseName, institutionId))
             return new ResponseObject(HttpStatus.CONFLICT.value(),
                     "Adding course to institution failed. A course with the same name already exists in the " +
                             "institution.",
                     new ArrayList<>()
             );
 
-        Course newCourse = new Course(courseName, new Institution(institutionName));
+        Institution institution = new Institution();
+        institution.setId(institutionId);
+        Course newCourse = new Course(courseName, institution);
         mCourseRepository.save(newCourse);
         return new ResponseObject(HttpStatus.CREATED.value(),
                 "Course was successfully added to institution",
@@ -59,23 +61,25 @@ public class CourseService {
     }
 
     @Transactional
-    public ResponseObject editCourseName(String institutionName, String newName, String oldName) {
+    public ResponseObject editCourseName(long institutionId, String newName, String oldName) {
 
-        if (!mCourseRepository.courseExistsInInstitution(oldName, institutionName)) {
+        if (!mCourseRepository.checkIfCourseExists(oldName, institutionId)) {
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Editing course failed. The course you are editing does not exist in the institution.",
                     new ArrayList<>()
             );
         }
 
-        if (mCourseRepository.courseExistsInInstitution(newName, institutionName)) {
-            return new ResponseObject(HttpStatus.CONFLICT.value(),
-                    "Editing course failed. A course with the same name already exists in the institution.",
-                    new ArrayList<>()
-            );
+        if (!newName.toLowerCase().matches(oldName.toLowerCase())){
+            if (mCourseRepository.checkIfCourseExists(newName, institutionId)) {
+                return new ResponseObject(HttpStatus.CONFLICT.value(),
+                        "Editing course failed. A course with the same name already exists in the institution.",
+                        new ArrayList<>()
+                );
+            }
         }
 
-        mCourseRepository.updateCourseName(institutionName, newName, oldName);
+        mCourseRepository.updateCourseName(institutionId, newName, oldName);
         return new ResponseObject(HttpStatus.OK.value(),
                 "Course name was successfully edited",
                 new ArrayList<>()
@@ -102,7 +106,7 @@ public class CourseService {
         return mCourseRepository.getCoursesByInstitution(institutionName).isEmpty();
     }
 
-    public boolean checkIfCourseExists(String courseName, String institutionName) {
-        return mCourseRepository.courseExistsInInstitution(courseName, institutionName);
+    public Course getCourseIfExists(String courseName, String institutionName) {
+        return mCourseRepository.getCourseIfExists(courseName, institutionName);
     }
 }

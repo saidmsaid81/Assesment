@@ -1,7 +1,6 @@
 package com.said.assesment.services;
 
 import com.said.assesment.models.Course;
-import com.said.assesment.models.Institution;
 import com.said.assesment.models.ResponseObject;
 import com.said.assesment.models.Student;
 import com.said.assesment.repositories.StudentRepository;
@@ -28,7 +27,12 @@ public class StudentService {
 
 
     public ResponseObject addAStudent(String studentName, String courseName, String institutionName ){
-        Course course = new Course(courseName, new Institution(institutionName));
+        Course course =  mCourseService.getCourseIfExists(courseName, institutionName);
+        if (course == null)
+            return new ResponseObject(HttpStatus.NOT_FOUND.value(),
+                    "Error adding student. Course does not exist",
+                    "");
+
         Student student = new Student(studentName, course);
         Student savedStudent = mStudentRepository.save(student);
 
@@ -81,8 +85,8 @@ public class StudentService {
 
         Student student = optionalStudent.get();
         String institutionName = student.getCourse().getInstitution().getName();
-        if (mCourseService.checkIfCourseExists(institutionName, newCourse)){
-            Course course = new Course(newCourse, new Institution(institutionName));
+        Course course = mCourseService.getCourseIfExists(institutionName, newCourse);
+        if (course != null){
             student.setCourse(course);
             mStudentRepository.save(student);
             return new ResponseObject(HttpStatus.OK.value(),
@@ -105,9 +109,9 @@ public class StudentService {
                     new ArrayList<>()
             );
 
-        if (mCourseService.checkIfCourseExists(newInstitution, newCourse)){
+        Course course = mCourseService.getCourseIfExists(newInstitution, newCourse);
+        if (course != null){
             Student student = optionalStudent.get();
-            Course course = new Course(newCourse, new Institution(newInstitution));
             student.setCourse(course);
             mStudentRepository.save(student);
             return new ResponseObject(HttpStatus.OK.value(),

@@ -33,7 +33,6 @@ public class InstitutionService {
                 "Institution was successfully added",
                 new ArrayList<>()
         );
-
     }
 
     public ResponseObject listAllInstitutions() {
@@ -67,11 +66,13 @@ public class InstitutionService {
             );
         }
 
-        if (mInstitutionRepository.checkIfInstitutionExistsByName(newName)) {
-            return new ResponseObject(HttpStatus.CONFLICT.value(),
-                    "Editing Institution failed. An Institution with the same name already exists.",
-                    new ArrayList<>()
-            );
+        if (!newName.toLowerCase().matches(oldName.toLowerCase())){
+            if (mInstitutionRepository.checkIfInstitutionExistsByName(newName)) {
+                return new ResponseObject(HttpStatus.CONFLICT.value(),
+                        "Editing Institution failed. An Institution with the same name already exists.",
+                        new ArrayList<>()
+                );
+            }
         }
 
         mInstitutionRepository.updateInstitutionName(newName, oldName);
@@ -98,7 +99,7 @@ public class InstitutionService {
 
     }
 
-    public boolean checkInstitutionExists(String institutionName) {
-        return mInstitutionRepository.checkIfInstitutionExistsByName(institutionName);
+    public Institution getInstitution(String institutionName) {
+        return mInstitutionRepository.getInstitutionByNameIgnoreCase(institutionName);
     }
 }
