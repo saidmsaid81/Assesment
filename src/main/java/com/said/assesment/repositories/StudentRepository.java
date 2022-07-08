@@ -11,11 +11,11 @@ import java.util.List;
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("SELECT student FROM Student student WHERE lower(student.course.name) = lower(?1) AND lower(student.course" +
-            ".institution) = lower(?2) ")
+            ".institution.name) = lower(?2) ")
     List<Student> getStudentByCourse(String courseName, String institutionName);
 
     @Query("SELECT student FROM Student student WHERE lower(student.course.name) = lower(?1) AND lower(student.course" +
-            ".institution) = lower(?2) ")
+            ".institution.name) = lower(?2) ")
     Page<Student> getStudentByCourse(String courseName, String institutionName, Pageable pageable);
 
     Page<Student> getStudentsByCourseInstitutionNameIgnoreCase(String institutionName, Pageable pageable);
