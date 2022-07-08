@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -42,13 +43,13 @@ public class StudentService {
         if (optionalStudent.isEmpty())
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Error deleting student. Student does not exist in the system",
-                    ""
+                    new ArrayList<>()
             );
 
         mStudentRepository.deleteById(studentId);
         return new ResponseObject(HttpStatus.OK.value(),
                 "Student was successfully deleted",
-                ""
+                new ArrayList<>()
         );
     }
 
@@ -57,7 +58,7 @@ public class StudentService {
         if (optionalStudent.isEmpty())
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Editing student name failed. The student you are editing does not exist in the institution.",
-                    ""
+                    new ArrayList<>()
             );
 
         optionalStudent.get().setName(newName);
@@ -65,7 +66,7 @@ public class StudentService {
 
         return new ResponseObject(HttpStatus.OK.value(),
                 "Student name was successfully edited",
-                ""
+                new ArrayList<>()
         );
     }
 
@@ -75,7 +76,7 @@ public class StudentService {
         if (optionalStudent.isEmpty())
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Changing course failed. The student does not exist in the institution.",
-                    ""
+                    new ArrayList<>()
             );
 
         Student student = optionalStudent.get();
@@ -86,13 +87,13 @@ public class StudentService {
             mStudentRepository.save(student);
             return new ResponseObject(HttpStatus.OK.value(),
                     "Changing course for student was successful",
-                    ""
+                    new ArrayList<>()
             );
         }
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Changing course failed. " + institutionName + " does not offer " + newCourse,
-                    ""
+                    new ArrayList<>()
             );
     }
 
@@ -101,7 +102,7 @@ public class StudentService {
         if (optionalStudent.isEmpty())
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Transferring university failed. The student does not exist in the institution.",
-                    ""
+                    new ArrayList<>()
             );
 
         if (mCourseService.checkIfCourseExists(newInstitution, newCourse)){
@@ -111,13 +112,13 @@ public class StudentService {
             mStudentRepository.save(student);
             return new ResponseObject(HttpStatus.OK.value(),
                     "Transferring university was successful",
-                    ""
+                    new ArrayList<>()
             );
         }
         else
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Transferring university failed. Course does not exist" ,
-                    ""
+                    new ArrayList<>()
             );
     }
 

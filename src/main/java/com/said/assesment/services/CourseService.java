@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,7 +20,7 @@ public class CourseService {
         mCourseRepository = courseRepository;
     }
 
-    public ResponseObject getAllCoursesByInstitution(String institutionName) {
+    public ResponseObject listAllCoursesByInstitution(String institutionName) {
         List<Course> courses =
                 mCourseRepository.getCoursesByInstitution(institutionName);
         return new ResponseObject(HttpStatus.OK.value(),
@@ -34,7 +35,7 @@ public class CourseService {
         );
     }
 
-    public ResponseObject sortCoursesByName(String institutionName, Sort.Direction direction) {
+    public ResponseObject sortCoursesInInstitutionByName(String institutionName, Sort.Direction direction) {
         return new ResponseObject(HttpStatus.OK.value(),
                 "Sorting courses was successful",
                 mCourseRepository.getCoursesByInstitution(institutionName, Sort.by(direction, "name"))
@@ -46,38 +47,38 @@ public class CourseService {
             return new ResponseObject(HttpStatus.CONFLICT.value(),
                     "Adding course to institution failed. A course with the same name already exists in the " +
                             "institution.",
-                    ""
+                    new ArrayList<>()
             );
 
         Course newCourse = new Course(courseName, new Institution(institutionName));
         mCourseRepository.save(newCourse);
         return new ResponseObject(HttpStatus.CREATED.value(),
                 "Course was successfully added to institution",
-                ""
+                new ArrayList<>()
         );
     }
 
     @Transactional
-    public ResponseObject updateCourseName(String institutionName, String newName, String oldName) {
+    public ResponseObject editCourseName(String institutionName, String newName, String oldName) {
 
         if (!mCourseRepository.courseExistsInInstitution(oldName, institutionName)) {
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Editing course failed. The course you are editing does not exist in the institution.",
-                    ""
+                    new ArrayList<>()
             );
         }
 
         if (mCourseRepository.courseExistsInInstitution(newName, institutionName)) {
             return new ResponseObject(HttpStatus.CONFLICT.value(),
                     "Editing course failed. A course with the same name already exists in the institution.",
-                    ""
+                    new ArrayList<>()
             );
         }
 
         mCourseRepository.updateCourseName(institutionName, newName, oldName);
         return new ResponseObject(HttpStatus.OK.value(),
                 "Course name was successfully edited",
-                ""
+                new ArrayList<>()
         );
 
     }
@@ -89,12 +90,12 @@ public class CourseService {
             return new ResponseObject(HttpStatus.NOT_FOUND.value(),
                     "Deleting course failed.  The course you are trying to delete does not exist in the " +
                             "system.",
-                    "");
+                    new ArrayList<>());
 
         mCourseRepository.delete(course);
         return new ResponseObject(HttpStatus.OK.value(),
                 "Course was successfully deleted.",
-                "");
+                new ArrayList<>());
     }
 
     public boolean institutionHasNoCourses(String institutionName) {
