@@ -1,5 +1,7 @@
 package com.said.assesment.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,6 +20,7 @@ public class Institution {
             strategy = SEQUENCE,
             generator = "institution_sequence"
     )
+    @JsonIgnore
     private long id;
 
     public Institution(String name) {
@@ -36,10 +39,12 @@ public class Institution {
         this.name = name;
     }
 
+    @JsonIgnore
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }

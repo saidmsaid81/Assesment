@@ -1,5 +1,7 @@
 package com.said.assesment.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ public class Course implements Serializable {
             strategy = SEQUENCE,
             generator = "course_sequence"
     )
+    @JsonIgnore
     private long id;
     
     private String name;
@@ -40,10 +43,12 @@ public class Course implements Serializable {
         return institution;
     }
 
+    @JsonIgnore
     public long getId() {
         return id;
     }
 
+    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
