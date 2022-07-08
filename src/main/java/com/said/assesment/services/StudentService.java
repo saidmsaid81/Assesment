@@ -85,7 +85,7 @@ public class StudentService {
 
         Student student = optionalStudent.get();
         String institutionName = student.getCourse().getInstitution().getName();
-        Course course = mCourseService.getCourseIfExists(institutionName, newCourse);
+        Course course = mCourseService.getCourseIfExists(newCourse, institutionName);
         if (course != null){
             student.setCourse(course);
             mStudentRepository.save(student);
@@ -109,7 +109,7 @@ public class StudentService {
                     new ArrayList<>()
             );
 
-        Course course = mCourseService.getCourseIfExists(newInstitution, newCourse);
+        Course course = mCourseService.getCourseIfExists(newCourse, newInstitution);
         if (course != null){
             Student student = optionalStudent.get();
             student.setCourse(course);
